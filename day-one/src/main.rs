@@ -66,6 +66,8 @@ fn main() {
     let file = File::open("data/input.txt").expect("Could not open file");
     let reader = BufReader::new(file);
 
+    // could avoid structs and do it one pass...
+    // but I am also trying to experiment with rust
     let mut safe_dial = SafeDial { items: vec![] };
 
     for line in reader.lines() {
