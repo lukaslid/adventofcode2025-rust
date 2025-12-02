@@ -12,57 +12,45 @@ struct ProductIDs {
     ids: Vec<ProductID>,
 }
 
-fn is_valid_num(num: u64) -> bool {
-    let str_num = num.to_string();
+fn is_invalid_part_one(id: u64) -> bool {
+    let str_num = id.to_string();
     let half_len = (str_num.len() - str_num.len() % 2) / 2;
 
-    for i in 0..half_len {
-        if !(str_num.len()).is_multiple_of(i + 1) {
-            continue;
-        }
-        let hmap = char_freq(&str_num, i + 1);
+    let parts = str_num.split_at(half_len);
 
-        for (_c, v) in hmap {
-            match i + 1 {
-                1 => {
-                    if v == str_num.len() {
-                        return false;
-                    }
-                }
-                _ => {
-                    if v == str_num.len() / (i + 1) {
-                        return false;
-                    }
-                }
-            }
-        }
-    }
-
-    true
+    parts.0 == parts.1
 }
 
-fn char_freq(s: &str, char_range: usize) -> HashMap<&str, usize> {
-    let mut counter = HashMap::new();
-    let length = s.len();
-
-    for i in (0..length).step_by(char_range) {
-        if i + char_range > length {
-            break;
-        }
-        *counter.entry(&s[i..i + char_range]).or_insert(0) += 1;
+fn is_invalid_part_two(id: u64) -> bool {
+    let str_num = id.to_string();
+    if str_num.len() < 2 {
+        return false;
     }
-    counter
+    // let max_sequence_len = (str_num.len() - str_num.len() % 2) / 2;
+    let max_sequence_len = str_num.len() / 2;
+
+    for i in 1..max_sequence_len + 1 {
+        let tmp_seq = &str_num[0..i];
+        let exp_repeat = str_num.len() / i;
+
+        let test_str = tmp_seq.repeat(exp_repeat);
+        if test_str == str_num {
+            return true;
+        }
+    }
+
+    false
 }
 
 impl ProductIDs {
-    fn calculate_invalid_ids_sum(&self) -> u64 {
+    fn part_one(&self) -> u64 {
         let mut result: u64 = 0;
 
         for id in &self.ids {
             let mut num = id.start;
 
             while num <= id.end {
-                if !is_valid_num(num) {
+                if is_invalid_part_one(num) {
                     result += num;
                 }
                 num += 1;
@@ -70,6 +58,22 @@ impl ProductIDs {
         }
 
         result
+    }
+
+    fn part_two(&self) -> u64 {
+        let mut total_sum = 0;
+
+        for id in &self.ids {
+            let mut num = id.start;
+
+            while num <= id.end {
+                if is_invalid_part_two(num) {
+                    total_sum += num;
+                }
+                num += 1;
+            }
+        }
+        total_sum
     }
 }
 
@@ -105,7 +109,9 @@ fn main() {
             });
         }
     }
-    println!("Total num: {}", product_ids.calculate_invalid_ids_sum());
+
+    println!("Total num Part1: {}", product_ids.part_one());
+    println!("Total num Part2: {}", product_ids.part_two());
     let duration = start.elapsed();
     println!("Elapsed time: {} seconds", duration.as_secs_f32());
 }
