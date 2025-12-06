@@ -33,10 +33,7 @@ fn part_two(fresh_db: &mut FreshIngredetientsDB) -> u64 {
     for rng in fresh_db.ranges.iter() {
         let mut insert = true;
 
-        println!("rng {:?}", rng);
-
         for optimal_rng in optimized_db.ranges.iter_mut() {
-            println!("OPT {:?}. ", optimal_rng);
             if optimal_rng.start <= rng.start && optimal_rng.end >= rng.end {
                 *optimal_rng = optimal_rng.start..optimal_rng.end;
                 insert = false;
